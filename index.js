@@ -100,7 +100,7 @@ const EnrolledCollection = database.collection("enrolledClasses");
       const query = { email: email }
       const user = await userCollection.findOne(query)
       const result = { student: user?.role === 'student' }
-      console.log(result)
+    
       res.send(result)
 
     })
