@@ -117,7 +117,7 @@ const EnrolledCollection = database.collection("enrolledClasses");
         },
       };
       const result = await userCollection.updateOne(filter, updateDoc);
-      
+      console.log(result)
       
     })
 
