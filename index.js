@@ -100,12 +100,13 @@ const EnrolledCollection = database.collection("enrolledClasses");
       const query = { email: email }
       const user = await userCollection.findOne(query)
       const result = { student: user?.role === 'student' }
+      console.log(result)
       res.send(result)
 
     })
 
     
-    //update user to admin
+    //update user to admi
     app.patch('/users/admin/:id', async (req, res) => {
       const id = req.params.id
       const filter = { _id: new ObjectId(id) }
