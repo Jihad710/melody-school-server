@@ -106,7 +106,7 @@ const EnrolledCollection = database.collection("enrolledClasses");
     })
 
     
-    //update user to admi
+    //update user to admin
     app.patch('/users/admin/:id', async (req, res) => {
       const id = req.params.id
       const filter = { _id: new ObjectId(id) }
@@ -118,7 +118,7 @@ const EnrolledCollection = database.collection("enrolledClasses");
       };
       const result = await userCollection.updateOne(filter, updateDoc);
       
-      res.send(result)
+      
     })
 
 
