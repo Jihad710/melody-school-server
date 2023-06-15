@@ -191,7 +191,13 @@ const EnrolledCollection = database.collection("enrolledClasses");
 
 
 
-   
+    //get all classes for Manages
+    app.get('/manageClasses', async (req,res)=>{
+
+      const result = await classCollection.find().toArray()
+      res.send(result)
+    })
+
 
     //make class approve
     app.patch('/classes/approve/:id', async(req,res)=>{
