@@ -162,20 +162,6 @@ const EnrolledCollection = database.collection("enrolledClasses");
     })
 
 
-       //get class my email
-       app.get('/classes',  async (req,res)=>{
-        const email = req.query.email;
-    
-        if (!email) {
-          res.send([])
-        }
-
-        
-        const query = { InstructorEmail: email };
-        const classes = await classCollection.find(query).toArray()
-      
-        res.send(classes)
-      })
 
        //update class by id
      app.patch('/updateClass/:id',  async (req, res) => {
