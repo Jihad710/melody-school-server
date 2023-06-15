@@ -36,8 +36,9 @@ async function run() {
 // database connect
 
 const database = client.db("melodyDb");
-const instructorCollection = database.collection("instructor");
+
 const userCollection = database.collection("users");
+const instrumentsCollection = database.collection("instruments");
 const classCollection = database.collection("classes");
 const selectClassCollection = database.collection("selectClasses");
 const EnrolledCollection = database.collection("enrolledClasses");
@@ -152,7 +153,10 @@ const EnrolledCollection = database.collection("enrolledClasses");
       res.send(result)
     })
 
-    
+    app.get('/instruments',  async (req, res) => {
+      const result = await instrumentsCollection.find().toArray()
+      res.send(result);
+    })
     
     //add class
     app.post('/classes',  async (req, res) => {
