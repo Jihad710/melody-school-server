@@ -249,7 +249,16 @@ app.patch('/classes/feedback/:id', async(req,res)=>{
 
 
   // Instructor page - which are approve by admin
- 
+  app.get('/instructors', async (req, res) => {
+    const query = { role: "instructor" };
+    
+    const result = await userCollection
+      .find(query)
+      .sort({ _id: -1 })
+      .toArray();
+    
+    res.send(result);
+  });
 
   // get total class and total class name by  instructor email
   app.get('/classes/:instructorEmail', async (req, res) => {
