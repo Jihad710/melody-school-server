@@ -10,7 +10,8 @@ const port = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
-
+//stripe
+const stripe = require("stripe")(process.env.MELODY_PAYMENT_SECRET_KEY)
 
 // connect to the database 
 
@@ -117,7 +118,7 @@ const EnrolledCollection = database.collection("enrolledClasses");
         },
       };
       const result = await userCollection.updateOne(filter, updateDoc);
-      console.log(result)
+      
       
     })
 
@@ -225,11 +226,11 @@ const EnrolledCollection = database.collection("enrolledClasses");
     })
 
 
-// showing instructor 
-app.get('/instructor', async (req, res) => {
-  const result = await instructorCollection.find().toArray();
-  res.send(result);
-});
+// // showing instructor 
+// app.get('/instructor', async (req, res) => {
+//   const result = await instructorCollection.find().toArray();
+//   res.send(result);
+// });
 
 //Send feed back= add feedback to class by id
 app.patch('/classes/feedback/:id', async(req,res)=>{
@@ -248,16 +249,7 @@ app.patch('/classes/feedback/:id', async(req,res)=>{
 
 
   // Instructor page - which are approve by admin
-  app.get('/instructorsMentor', async (req, res) => {
-    const query = { role: "instructor" };
-    
-    const result = await userCollection
-      .find(query)
-      .sort({ _id: -1 })
-      .toArray();
-    
-    res.send(result);
-  });
+ 
 
   // get total class and total class name by  instructor email
   app.get('/classes/:instructorEmail', async (req, res) => {
@@ -310,6 +302,42 @@ const query = { _id : new ObjectId(id)}
 const result = await selectClassCollection.deleteOne(query)
 res.send(result)
 })
+
+
+//payment intent
+app.post('/create-melody-payment-intent' , async(req,res)=>{
+  const { price } = req.body
+ 
+  const amount = Math.floor(price * 100);
+
+  const paymentIntent = await stripe.paymentIntents.create({
+    amount: amount,
+    currency: 'usd',
+    payment_method_types: ['card'],
+  });
+  res.send({
+    clientSecret: paymentIntent.client_secret
+    
+  });
+})
+
+//save payments to data base 
+app.post('/payments',  async (req,res)=>{
+  const {payment, selectedClass} = req.body
+  const insertedResult = await paymentCollection.insertOne(payment)
+  const query = { _id : new ObjectId(payment.selectedClass)}
+ 
+  const deleteResult = await selectClassCollection.deleteOne(query)
+  
+  const decreaseSeatAndIncreaseEnroll = await classCollection.updateOne(
+    { _id: new ObjectId(payment.classID) },
+    { $inc: { seats: -1, TotalEnrolled: 1 } })
+const EnrolledClass = await EnrolledCollection.insertOne(selectedClass)
+
+
+ ;res.send({insertedResult,deleteResult,decreaseSeatAndIncreaseEnroll,EnrolledClass})
+})
+
 
 // get enrolled classes bt email
 app.get('/enrolledClass/:email' , async(req,res)=>{
