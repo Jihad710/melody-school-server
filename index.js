@@ -318,7 +318,22 @@ res.send(result)
 })
 
 
+//payment intent
+app.post('/create-melody-payment-intent' , async(req,res)=>{
+  const { price } = req.body
+ 
+  const amount = Math.floor(price * 100);
 
+  const paymentIntent = await stripe.paymentIntents.create({
+    amount: amount,
+    currency: 'usd',
+    payment_method_types: ['card'],
+  });
+  res.send({
+    clientSecret: paymentIntent.client_secret
+    
+  });
+})
 
 //save payments to data base 
 app.post('/payments',  async (req,res)=>{
